@@ -1,0 +1,17 @@
+// Write a program in C to print all the alphabets using a pointer.
+
+#include <stdio.h>
+
+int main() {
+    char alphabets[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+    char *ptr = alphabets;
+
+    printf("The Alphabets are :\n");
+    while (*ptr != '\0') {
+        printf("%c ", *ptr);
+        ptr++;
+    }
+    printf("\n");
+
+    return 0;
+}

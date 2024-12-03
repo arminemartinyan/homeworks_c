@@ -1,0 +1,45 @@
+// Write a program similiar to Unix “grep” utility.
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+void grepFile(FILE *file, const char *pattern) {
+    char line[1024];
+    int lineNumber = 1;
+    int matchFound = 0;
+
+    while (fgets(line, sizeof(line), file) != NULL) {
+        if (strstr(line, pattern) != NULL) {
+            printf("Line %d: %s", lineNumber, line);
+            matchFound = 1;
+        }
+        lineNumber++;
+    }
+
+    if (!matchFound) {
+        printf("No matches found for pattern: %s\n", pattern);
+    }
+}
+
+int main(int argc, char *argv[]) {
+    if (argc != 3) {
+        printf("Usage: %s <pattern> <file_name>\n", argv[0]);
+        return 1;
+    }
+
+    const char *pattern = argv[1];
+    const char *fileName = argv[2];
+    FILE *file = fopen(fileName, "r");
+
+    if (file == NULL) {
+        printf("Error opening file: %s\n", fileName);
+        return 1;
+    }
+
+    grepFile(file, pattern);
+
+    fclose(file);
+    return 0;
+}
+

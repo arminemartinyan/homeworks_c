@@ -1,0 +1,210 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct Student {
+    char name[50];
+    char surname[50];
+    int id;
+    float grade;
+    struct Student *next;
+} Student;
+
+Student *head = NULL;
+
+void add_student() {
+    Student *new_student = (Student *)malloc(sizeof(Student));
+    if (!new_student) {
+        printf("Memory allocation failed!\n");
+        return;
+    }
+
+    printf("Enter Name: ");
+    scanf("%s", new_student->name);
+    printf("Enter Surname: ");
+    scanf("%s", new_student->surname);
+    printf("Enter ID: ");
+    scanf("%d", &new_student->id);
+    printf("Enter Grade: ");
+    scanf("%f", &new_student->grade);
+
+    new_student->next = head;
+    head = new_student;
+    printf("Student added successfully!\n");
+}
+
+void remove_student() {
+    int id;
+    printf("Enter ID of student to remove: ");
+    scanf("%d", &id);
+
+    Student *current = head, *prev = NULL;
+
+    while (current) {
+        if (current->id == id) {
+            if (prev) {
+                prev->next = current->next;
+            } else {
+                head = current->next;
+            }
+            free(current);
+            printf("Student removed successfully!\n");
+            return;
+        }
+        prev = current;
+        current = current->next;
+    }
+    printf("Student with ID %d not found.\n", id);
+}
+
+void search_student() {
+    int id;
+    printf("Enter ID to search: ");
+    scanf("%d", &id);
+
+    Student *current = head;
+    while (current) {
+        if (current->id == id) {
+            printf("Student found: %s %s, ID: %d, Grade: %.2f\n",
+                   current->name, current->surname, current->id, current->grade);
+            return;
+        }
+        current = current->next;
+    }
+    printf("Student with ID %d not found.\n", id);
+}
+
+void display_students() {
+    Student *current = head;
+    if (!current) {
+        printf("No students in the list.\n");
+        return;
+    }
+
+    printf("Student Details:\n");
+    while (current) {
+        printf("%s %s, ID: %d, Grade: %.2f\n",
+               current->name, current->surname, current->id, current->grade);
+        current = current->next;
+    }
+}
+
+void display_average_grade() {
+    Student *current = head;
+    if (!current) {
+        printf("No students in the list.\n");
+        return;
+    }
+
+    float total_grade = 0;
+    int count = 0;
+
+    while (current) {
+        total_grade += current->grade;
+        count++;
+        current = current->next;
+    }
+    printf("Average Grade: %.2f\n", total_grade / count);
+}
+
+void save_to_file() {
+    FILE *file = fopen("group_details.csv", "w");
+    if (!file) {
+        printf("Error opening file for writing.\n");
+        return;
+    }
+
+    Student *current = head;
+    while (current) {
+        fprintf(file, "%s,%s,%d,%.2f\n",
+                current->name, current->surname, current->id, current->grade);
+        current = current->next;
+    }
+
+    fclose(file);
+    printf("Student details saved to 'group_details.csv'.\n");
+}
+
+void read_from_file() {
+    FILE *file = fopen("group_details.csv", "r");
+    if (!file) {
+        printf("Error opening file for reading.\n");
+        return;
+    }
+
+    char buffer[200];
+    while (fgets(buffer, sizeof(buffer), file)) {
+        Student *new_student = (Student *)malloc(sizeof(Student));
+        if (!new_student) {
+            printf("Memory allocation failed!\n");
+            fclose(file);
+            return;
+        }
+
+        sscanf(buffer, "%[^,],%[^,],%d,%f",
+               new_student->name, new_student->surname,
+               &new_student->id, &new_student->grade);
+        new_student->next = head;
+        head = new_student;
+    }
+
+    fclose(file);
+    printf("Student details loaded from 'group_details.csv'.\n");
+}
+
+void free_memory() {
+    Student *current = head;
+    while (current) {
+        Student *temp = current;
+        current = current->next;
+        free(temp);
+    }
+}
+
+int main() {
+    int choice;
+
+    while (1) {
+        printf("\nMenu:\n");
+        printf("1. Add Student\n");
+        printf("2. Remove Student\n");
+        printf("3. Search Student\n");
+        printf("4. Display All Students\n");
+        printf("5. Display Average Grade\n");
+        printf("6. Save to File\n");
+        printf("7. Read from File\n");
+        printf("8. Exit\n");
+        printf("Enter your choice: ");
+        scanf("%d", &choice);
+
+        switch (choice) {
+            case 1:
+                add_student();
+                break;
+            case 2:
+                remove_student();
+                break;
+            case 3:
+                search_student();
+                break;
+            case 4:
+                display_students();
+                break;
+            case 5:
+                display_average_grade();
+                break;
+            case 6:
+                save_to_file();
+                break;
+            case 7:
+                read_from_file();
+                break;
+            case 8:
+                free_memory();
+                printf("Exiting program.\n");
+                return 0;
+            default:
+                printf("Invalid choice. Please try again.\n");
+        }
+    }
+}

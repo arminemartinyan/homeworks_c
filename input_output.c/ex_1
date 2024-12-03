@@ -1,0 +1,64 @@
+// Write a C program to compare two files, printing the first line where they differ
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+void compareFiles(FILE *file1, FILE *file2) {
+    char line1[1024], line2[1024];
+    int lineNumber = 1;
+
+    // Read lines from both files until EOF
+    while (fgets(line1, sizeof(line1), file1) != NULL && fgets(line2, sizeof(line2), file2) != NULL) {
+        // Compare the lines
+        if (strcmp(line1, line2) != 0) {
+            printf("Files differ at line %d:\n", lineNumber);
+            printf("File 1: %s", line1);
+            printf("File 2: %s", line2);
+            return;
+        }
+        lineNumber++;
+    }
+
+    // If one file has more lines than the other
+    if (fgets(line1, sizeof(line1), file1) != NULL || fgets(line2, sizeof(line2), file2) != NULL) {
+        printf("Files differ at line %d:\n", lineNumber);
+        printf("File 1: %s", line1);
+        printf("File 2: %s", line2);
+        return;
+    }
+
+    printf("The files are identical.\n");
+}
+
+int main() {
+    FILE *file1, *file2;
+    char fileName1[100], fileName2[100];
+
+    printf("Enter the name of the first file: ");
+    scanf("%s", fileName1);
+    printf("Enter the name of the second file: ");
+    scanf("%s", fileName2);
+
+    // Open the files
+    file1 = fopen(fileName1, "r");
+    file2 = fopen(fileName2, "r");
+
+    if (file1 == NULL) {
+        printf("Error opening file %s\n", fileName1);
+        return 1;
+    }
+    if (file2 == NULL) {
+        printf("Error opening file %s\n", fileName2);
+        return 1;
+    }
+
+    // Compare the files
+    compareFiles(file1, file2);
+
+    // Close the files
+    fclose(file1);
+    fclose(file2);
+
+    return 0;
+}

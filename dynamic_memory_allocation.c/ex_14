@@ -1,0 +1,46 @@
+// Write a program in C to sort an array using a pointer.
+
+#include <stdio.h>
+#include <stdlib.h>
+
+void sortArray(int *arr, int n) {
+    for (int i = 0; i < n - 1; i++) {
+        for (int j = i + 1; j < n; j++) {
+            if (*(arr + i) > *(arr + j)) {
+                int temp = *(arr + i);
+                *(arr + i) = *(arr + j);
+                *(arr + j) = temp;
+            }
+        }
+    }
+}
+
+int main() {
+    int n;
+
+    printf("Input the number of elements to store in the array : ");
+    scanf("%d", &n);
+
+    int *arr = (int *)malloc(n * sizeof(int));
+    if (!arr) {
+        printf("Memory allocation failed!\n");
+        return 1;
+    }
+    
+    printf("Input %d number of elements in the array :\n", n);
+    for (int i = 0; i < n; i++) {
+        printf("element - %d : ", i + 1);
+        scanf("%d", &arr[i]);
+    }
+
+    sortArray(arr, n);
+
+    printf("\nThe elements in the array after sorting :\n");
+    for (int i = 0; i < n; i++) {
+        printf("element - %d : %d\n", i + 1, *(arr + i));
+    }
+
+    free(arr);
+
+    return 0;
+}
